@@ -1,38 +1,36 @@
 // DO YOUR MAGIC
-const router = require('express').Router()
-const mw = require('./cars-middleware')
+const express = require('express')
 const Car = require('./cars-model')
+const {
+    checkCarId,
+    checkCarPayload,
+    checkVinNumberUnique,
+    checkVinNumberValid
+    } = require('./cars-middleware')
+
+const router = express.Router()
 
 router.get('/', async (req, res, next) => {
     try{
         const cars = await Car.getAll()
         res.json(cars)
-    } catch (err) {
-        next(err)
+} catch(err) {
+    next(err)
     }
 })
 
 router.get('/:id', 
-    mw.checkCarId, 
-    async (req, res, next) => {
-        const car = await Car.getById(req.params.id)
-        res.json(car)
+    checkCarId, 
+    (req, res, next) => {
+        res.json(req.car)
     })
 
 router.post('/',
-    mw.checkCarPayload,
-    mw.checkVinNumberUnique,
+    checkCarPayload,
+    checkVinNumberUnique,
+    checkVinNumberValid,
     async (req, res, next) => {
-        try{
-            const newCar = await Car.create({
-                vin: ,
-                make: ,
-                model: ,
-                mileage: ,
-                title: ,
-                transmission: 
-            })
-        } catch (err) {
-            next(err)
-        }
+       res.json('posting new car')
     })
+
+    module.exports = router
